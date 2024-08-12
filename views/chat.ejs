@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="sidebar neumorphic">
+            <h2>Welcome <%= username %></h2>
+            <form action="/logout" method="post">
+                <button type="submit" class="neumorphic-btnLog">Logout</button>
+            </form>
+            <div class="users">
+                <h3>Active Status</h3>
+                <ul>
+                    <% users.forEach(user => { %>
+                        <li>
+                            <span class="user-status <%= user.active ? 'active' : 'inactive' %>"></span>
+                            <%= user.username %>
+                        </li>
+                    <% }); %>
+                </ul>
+            </div>
+        </div>
+        <div class="chat-box neumorphic">
+            <div class="chat-header">
+                <h3>Chat</h3>
+                <form action="/select-user" method="POST">
+                    <select name="selectedUser" class="neumorphic-select">
+                        <option disabled selected>Select the account you want to chat</option>
+                        <% users.forEach(user => { %>
+                            <option value="<%= user.id %>" <% if (selectedUser === user.id) { %>selected<% } %>><%= user.username %></option>
+                        <% }); %>
+                    </select>
+                    <button type="submit" class="neumorphic-btn">Select User</button>
+                </form>
+                
+            </div>
+            <% if (selectedUser) { %>
+                <div class="messages">
+                    <% messages.forEach(message => { %>
+                        <div class="message <%= message.sender_id === userId ? 'sent' : 'received' %> neumorphic">
+                            <p><%= message.message %></p>
+                        </div>
+                    <% }); %>
+                </div>
+                <form action="/send-message" method="POST" class="message-input">
+                    <input type="hidden" name="receiverId" value="<%= selectedUser %>">
+                    <input type="text" name="message" placeholder="Type your message..." required class="neumorphic-input">
+                    <button type="submit" class="neumorphic-btn">Send</button>
+                </form>
+            <% } %>
+        </div>
+    </div>
+</body>
+</html>
